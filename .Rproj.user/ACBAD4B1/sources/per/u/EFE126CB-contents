@@ -1,0 +1,50 @@
+
+
+
+print_fibonacci <- function(limit) {
+  
+  a <- 0
+  b <- 1
+  
+  cat(a, b, sep = " ")
+  
+  while ( b < limit ) {
+    
+    next_num <- a + b
+    
+    cat(" ", next_num)
+    
+    a <- b
+    b <- next_num
+    
+  }
+  
+}
+
+print_fibonacci(10)
+print_fibonacci(12)
+print_fibonacci(7)
+
+print_fibonacci <- function(limit) {
+  
+  a <- 0
+  b <- 1
+  
+  cat(a, sep = " ")
+  
+  while ( b <= limit ) {
+    
+    next_num <- a + b
+    
+    cat(" ", b)
+    
+    a <- b
+    b <- next_num
+    
+  }
+  
+}
+
+print_fibonacci(10)
+print_fibonacci(12)
+print_fibonacci(7)

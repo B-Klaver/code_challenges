@@ -1,0 +1,180 @@
+---
+title: "Friday Code Challenge"
+output: html_document
+date: "2025-05-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Jump Game
+ 
+Problem:
+  You are given an integer vector nums.
+  You are initially positioned at the vector's first index,
+  and each element in the vector represents your maximum jump length
+  at that position.
+ 
+Return TRUE if you can reach the last index, or FALSE otherwise.
+ 
+Example 1:
+  Input: nums = [2,3,1,1,4]
+  Output: TRUE
+ 
+  Explanation:
+    Jump 1 step from index 1 to 2, then 3 steps to the last index.
+ 
+Example 2:
+  Input: nums = [3,2,1,0,4]
+  Output: FALSE
+ 
+  Explanation:
+    You will always arrive at index 4 no matter what.
+    Its maximum jump length is 0, which makes it impossible to reach
+    the last index.
+ 
+Note:
+  In R, index starts at 1.
+ 
+ 
+``` {r}
+
+jump <- function(nums) {
+  
+  # If no zeros we'll always get to the end
+  if ( !0 %in% nums ) {
+    return(TRUE)
+  }
+  
+  # Find all 0's in the vector
+  zero_index <- which(nums == 0)
+  
+  # Iterate the algorithm for each instance of 0 and see if we can jump
+  # over it
+  for (x in zero_index) {
+    
+    # If we only have one 0 and its at the end we'll always reach the end
+    if ( length(zero_index) == 1 && x == length(nums) ) {
+      return(TRUE)
+      break
+    } 
+    
+    # If the 0 is at the start we can't jump
+    if ( x == 1 ) {
+      return(FALSE)
+      break
+    } 
+    
+    # iterate over every index prior to 0 index and check
+    # if their max jump will get past that index
+    for ( i in 1:(x-1) ) {
+      
+      #browser()
+      
+      # Max jump distance for that index
+      # we just need to find an index who's max jump is larger
+      # than the distance between that index and the 0 index
+      max_jump <- nums[i]
+      
+      # The distance between the current index
+      # and the 0 index (ie. the minimum distance
+      # that we'll need to jump over)
+      jump_min <- (x - i)
+      
+      # If our jump is larger than the
+      # distance then we'll make it over
+      # if we make it then end the loop and finish
+      # if we don't then next iteration
+      if (max_jump > jump_min) {
+        reach_end <- TRUE
+        break
+      } else {
+        reach_end <- FALSE
+        next
+      }
+    }
+  }
+  
+  return(reach_end)
+  
+}
+
+
+jump(c(3,2,0,1,4))
+jump(c(1,1,2,0,4))
+jump(c(1,1,2,0,4))
+jump(c(3,2,1,1,4))
+jump(c(3,1,0,1,4))
+jump(c(1,1,0,1,4))
+jump(c(1,1,1,1,0))
+jump(c(2,2,0,0,2))
+jump(c(2,0,1,0,2))
+jump(c(2,0,3,0,2))
+jump(c(0,0,3,0,2))
+jump(c(0))
+
+```
+
+Given a biased coin (a function that toss a coin with bias), write a function to produce unbiased toss result.
+ 
+
+``` {r}
+
+#cheater
+coin_tosser <- function(n, p) {
+  
+  x <- c()
+  
+  for (i in 1:n) {
+    x[i] <- ifelse(sample(0:1, 1) == 1, "H", "T")
+  }
+  
+  
+}
+
+
+
+#real
+
+# essentially just use the TH or HT as a 50/50 odd and assign those as the results
+
+bias_toss <- function(p_head) {
+  sample(c('H', 'T'), prob = c(p_head, 1 - p_head), replace = T, size = 2)
+}
+
+assign_output <- function(p_head) {
+  dbl_toss <- bias_toss(p_head)
+  if (all(dbl_toss == c('H', 'T'))) return ('H')
+  if (all(dbl_toss == c('T', 'H'))) return ('T')
+  
+  return(NULL)
+  
+}
+
+unbiased_toss <- function(p_head, n = 1000) {
+  
+  tosses <- replicate(n = n, assign_output(p_head))
+  
+  tosses <- unlist(tosses)
+  
+  table(tosses)
+  
+  
+}
+
+get_toss_prob <- function(p_head, n = 1000) {
+  tosses <- unbiased_toss(p_head, n)
+  tosses['H'] / sum(tosses)
+}
+
+get_toss_prob(0.6)
+
+
+```
+
+
+
+
+
+

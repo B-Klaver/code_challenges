@@ -1,0 +1,132 @@
+---
+title: "Friday Code Challenge"
+output: html_document
+date: "2025-05-08"
+---
+
+# Write a R program to print the Fibonacci series starting with 0, 1 up to a given limit.
+# Hint 1: While loop
+
+``` {r}
+# Define a function to print the Fibonacci series up to a given limit using a while loop
+print_fibonacci_series <- function(limit) {
+    # Initialize variables to store the first two numbers of the Fibonacci series
+    a <- 0
+    b <- 1
+    
+    # Print the first two numbers of the Fibonacci series
+    cat(a, b, sep = " ")
+    
+    # Iterate while the next Fibonacci number is less than or equal to the limit
+    while (b <= limit) {
+        # Calculate the next Fibonacci number
+        next_num <- a + b
+        
+        # Print the next Fibonacci number
+        cat(" ", next_num)
+        
+        # Update variables for the next iteration
+        a <- b
+        b <- next_num
+    }
+}
+
+print_fibonacci_series(100)
+
+```
+
+# Write a R program function to calculate the nth term of the Fibonacci series starting with 0, 1.
+# Hint 1: Recursion
+ 
+``` {r}
+# Define a function to calculate the nth term of the Fibonacci series using recursion
+fibonacci <- function(n) {
+    if (n <= 1) {  # Base case: If n is 0 or 1, return n
+        return(n)
+    } else {
+        # Recursive case: Calculate the nth term using recursion
+        return(fibonacci(n - 1) + fibonacci(n - 2))
+    }
+}
+
+fibonacci(10)
+fibonacci(1)
+fibonacci(5)
+fibonacci(15)
+fibonacci(2)
+fibonacci(3)
+
+
+
+```
+
+
+
+
+# Write a R program that calculates the factorial of a given number.
+# Hint 1: While loop
+``` {r}
+# Function to calculate the factorial of a given number
+calculate_factorial <- function(n) {
+    # Initialize variables
+    fact <- 1
+    i <- 1
+    
+    # Check if the entered number is negative
+    if (n < 0) {
+        print("Factorial is not defined for negative numbers.")
+    } else if (n == 0) { # Check if the entered number is 0
+        print("Factorial of 0 is 1.")
+    } else { # Calculate factorial using a while loop
+        while (i <= n) {
+            fact <- fact * i
+            i <- i + 1
+        }
+        # Return the factorial of the entered number
+        return(fact)
+    }
+}
+
+factorial_result <- calculate_factorial(5)
+```
+
+# Write a R program function to check if a given number is a palindrome.
+# Hint 1: Recursion
+ 
+``` {r}
+# Define a function to check if a given number is a palindrome using recursion
+is_palindrome <- function(number) {
+    # Convert the number to a character string
+    num_str <- as.character(number)
+    
+    # Define a helper function to check if a string is a palindrome
+    is_palindrome_helper <- function(str) {
+        if (nchar(str) <= 1) {
+            return(TRUE)  # Base case: Single character or empty string is a palindrome
+        } else {
+            first_char <- substr(str, 1, 1)  # Get the first character
+            last_char <- substr(str, nchar(str), nchar(str))  # Get the last character
+            
+            # Check if the first and last characters are equal
+            if (first_char != last_char) {
+                return(FALSE)  # If not equal, not a palindrome
+            } else {
+                # Recursively check the substring without the first and last characters
+                return(is_palindrome_helper(substr(str, 2, nchar(str) - 1)))
+            }
+        }
+    }
+    
+    # Call the helper function with the number converted to a string
+    return(is_palindrome_helper(num_str))
+}
+is_palindrome(42324)
+is_palindrome(1234)
+```
+
+#Give me the primes:
+Prime numbers include 2, 3, 5, 7, and any other number that’s only divisible by itself and 1. Write a function in R that takes an integer as a parameter and returns all the prime numbers up to and including that integer.
+
+``` {r}
+
+```

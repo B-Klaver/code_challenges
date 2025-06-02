@@ -1,0 +1,212 @@
+---
+title: "Friday Code Challenge"
+output: html_document
+date: "2025-05-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Stable Matching:
+
+Given N hospitals with a certain number of available positions and N medical students 
+looking for a position at a hospital. Each hospital has its ranking of the students 
+in order of preference, and each student has the ranking of the hospitals in order 
+of preference. The goal is to write a function(s) to find a stable assignment where 
+each student is assigned to at most one hospital so that all available positions in 
+all hospitals are filled.
+
+We say that an assignment is stable if no instability of the following two types exists:
+- There is a hospital h and students s and s′ so that: s is assigned to h; s′ is 
+not assigned to any hospital; and h prefers s′ to s.
+- There are hospitals h and h′, and students s and s′ so that: s is assigned to h; 
+s′ is assigned to h′; h prefers s′ to s; and s′ prefers h to h′
+
+Examples:
+Given a 2NxN preference list where row [1,] to [N,] is hospital 1 to N’s preference 
+list of students and row [N+1,] to [2N] is student N+1 to 2N’s preference list of 
+hospitals we have the following matrix and result:
+
+The matrix:
+    [,1] [,2] [,3]
+[1,]    4     5    6
+[2,]    5     4    6
+[3,]    4     6    5
+[4,]    2     1    3
+[5,]    3     2    1
+[6,]    1     2    3
+ 
+	
+The output:
+
+Students:Hospitals
+
+4:1
+
+5:2
+
+6:3
+ 
+Explanation:
+Hospital 1 and student 4 mutually prefer each other, forming a stable pair. 
+Similarly, hospital 2 pairs with student 5, and hospital 3 is matched with 
+student 6, ensuring a stable arrangement.
+ 
+Code to produce example above:
+matrix(c(4,5,6,5,4,6,4,6,5,2,1,3,3,2,1,1,2,3), nrow = 6, ncol = 3, byrow = T)
+ 
+Helper code to generate a bunch of variety of inputs:
+
+set.seed(123)
+num_of_matches <- 10
+pref_list <- t(
+  cbind(
+    replicate(num_of_matches, sample((num_of_matches+1):(2*num_of_matches))),
+    replicate(num_of_matches, sample(1:num_of_matches, num_of_matches))
+  )
+)
+
+
+``` {r}
+
+# Helper code to generate a bunch of variety of inputs:
+
+match_matrix <- matrix(c(4,5,6,5,4,6,4,6,5,2,1,3,3,2,1,1,2,3), nrow = 6, ncol = 3, byrow = T)
+
+match_matrix <- matrix(c(4,5,6,4,5,6,5,6,4,2,1,3,1,2,3,3,2,1), nrow = 6, ncol = 3, byrow = T)
+
+
+
+hospital_assignment <- function(match_matrix) {
+  
+  # chop up the matrix into students and hospitals
+  n <- nrow(match_matrix)/2
+  
+  available_hospitals <- 1:n
+  
+  available_students <- (n+1):(2*n)
+  
+  # create empty matrix to fill with matches
+  matched_pairs <- matrix(, ncol = 2, byrow = T)
+  colnames(matched_pairs) <- c("hospital", "student")
+  
+  #iterate through remaining hospitals
+  while(length(available_hospitals) > 0) {
+    
+    # identify the index of hospital that's next in line
+    # for matching
+    hospital_index <- available_hospitals[1]
+    
+    # get the priority students for this hospital from
+    # the matrix
+    priority_students <- match_matrix[hospital_index,]
+    
+    # among the students, remove those that are already matched
+    # then just select the first in line
+    student_index <- priority_students[which(priority_students %in% available_students)][1]
+    
+    # for the selected student, get their priority schools
+    priority_hospitals <- match_matrix[student_index,]
+    
+    # for the priority schools for this student, get the alternative school 
+    # (ie their first choice) among those remaining
+    alternative_hospital_index <- priority_hospitals[which(priority_hospitals %in% available_hospitals)][1]
+    
+    # for the alternative hospital who is their next up student in priority among
+    # the students that are available
+    alternative_priority_students <- match_matrix[alternative_hospital_index,]
+    alternative_student_index <- alternative_priority_students[which(alternative_priority_students %in% available_students)][1]
+    
+    # if the student's priority school also has them as their #1 remaining selection
+    # then flip the current index to that school and we will record this as
+    # a match
+    if (isTRUE(student_index == alternative_student_index)) {
+      
+      hospital_index <- alternative_hospital_index
+      
+    }
+    
+    # combine our new pair with the matched matrix
+    matched_pairs <- rbind(
+      matched_pairs, 
+      matrix(
+        c(hospital_index, student_index), 
+        ncol = 2,
+        byrow = T
+      )
+    )
+    
+    # lastly remove the two matches from the available students and hospitals
+    available_hospitals <- available_hospitals[-which(available_hospitals == hospital_index)]
+    available_students <- available_students[which(!available_students %in% student_index)]
+    
+  }
+  
+  #remove null row and order on first column
+  matched_pairs <- matched_pairs[-1,]
+  matched_pairs <- matched_pairs[order(matched_pairs[,1]),]
+  
+  return(matched_pairs)
+  
+}
+
+
+
+set.seed(123)
+num_of_matches <- 4
+pref_list <- t(
+  cbind(
+    replicate(num_of_matches, sample((num_of_matches+1):(2*num_of_matches))),
+    replicate(num_of_matches, sample(1:num_of_matches, num_of_matches))
+  )
+)
+
+pref_list <- matrix(
+  c(
+    5, 6, 7, 8, # 1
+    5, 6, 8, 7, # 2
+    6, 7, 8, 5, # 3
+    7, 8, 6, 5, # 4
+    2, 1, 3, 4, # 5
+    1, 2, 4, 3, # 6
+    1, 2, 4, 3, # 7
+    1, 2, 4, 3  # 8
+  ), 
+  nrow = 8, 
+  ncol = 4, 
+  byrow = T
+)
+
+# 1: 2, 5
+# 2: 1, 6
+# 3: 4, 7
+# 4: 3, 8
+
+print(pref_list)
+hospital_assignment(pref_list)
+
+
+pref_list <- matrix(
+  c(
+    8, 7, 10, 9, 6, 
+    8, 6, 7, 10, 9, 
+    7, 8, 6, 9, 10, 
+    6, 9, 10, 8, 7, 
+    8, 9, 7, 6, 10,
+    1, 2, 3, 4, 5,
+    1, 3, 4, 5, 2,
+    2, 1, 3, 4, 5,
+    2, 3, 4, 5, 1,
+    5, 3, 2, 1, 4
+  ), 
+  nrow = 10, 
+  ncol = 5, 
+  byrow = T
+)
+
+hospital_assignment(pref_list)
+
+```
+
+
