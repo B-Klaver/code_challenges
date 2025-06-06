@@ -1,0 +1,114 @@
+---
+title: "Friday Code Challenge"
+output: html_document
+date: "2025-05-08"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+ 
+Problem:
+There are n light bulbs initially off. You toggle every i-th bulb in i-th round (i from 1 to n). After n rounds, which bulbs are on?
+Explanation:
+Microsoft has failed us with the lack of light bulb emojis so I will use  to represent off 
+
+Say you have n = 5 light bulbs.
+
+Round 0: all starts off
+
+
+Round 1: "toggle every first light bulb in the first round" so that's all light bulbs
+
+
+Round 2: "toggle every second light bulb in the second round" so that's every other light bulbs
+
+
+Round 3: "toggle every third light bulb in the third round" so that's every third
+
+
+Round 4: "toggle every fourth light bulb in the fourth round"
+
+
+Round 5: "toggle every fifth light bulb in the fifth round"
+
+
+Answer:
+
+If n = 5, positions 1 and 4 bulbs are on.
+
+ 
+
+``` {r}
+
+
+light_switch_v1 <- function(n) {
+  lights <- rep(F, n)
+  message(paste0("Round 0:"))
+  print(lights)
+  for (i in 1:n) {
+    for (x in seq_along(lights)) {
+      #browser()
+      if (x %% i == 0) {
+        lights[x] <- ifelse(isTRUE(lights[x]), F, T) 
+      }
+    }  
+    message(paste0("Round ", i, ":"))
+    print(lights)
+  }
+}
+
+
+light_switch_v2 <- function(n) {
+  
+  lights <- c()
+  for (x in 1:n) {
+    #browser()
+    lights[x] <- ifelse(sum(x %% seq_along(1:n) == 0) %% 2 == 0, F, T) # 4 0s means flips 4 times
+    
+  }
+  
+  message(paste0("Round ", n, ":"))
+  print(as.logical(lights))
+  
+}
+
+
+
+light_switch_v3 <- function(n) {
+  
+  
+  #only squares get flipped
+  lights <- sqrt(1:n) %% 1 == 0
+  
+  message(paste0("Round ", n, ":"))
+  print(as.logical(lights))
+  
+}
+
+light_switch_v1(9)
+light_switch_v2(9)
+light_switch_v3(9)
+
+```
+
+#Give me the primes:
+Prime numbers include 2, 3, 5, 7, and any other number that’s only divisible by itself and 1. Write a function in R that takes an integer as a parameter and returns all the prime numbers up to and including that integer.
+
+``` {r}
+
+n <- 7
+
+primes <- function(n) {
+  numbers <- 1:n
+  for (i in numbers) {
+    results[i] <- sum((i / seq_along(numbers)) %% 1 == 0) == 2
+  }
+  return(numbers[results])
+}
+
+primes(7)
+primes(11)
+primes(20)
+

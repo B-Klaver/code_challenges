@@ -190,4 +190,18 @@ Prime numbers include 2, 3, 5, 7, and any other number that’s only divisible b
 
 ``` {r}
 
+n <- 7
+
+primes <- function(n) {
+  numbers <- 1:n
+  for (i in numbers) {
+    results[i] <- sum((i / seq_along(numbers)) %% 1 == 0) == 2
+  }
+  return(numbers[results])
+}
+
+primes(7)
+primes(11)
+primes(20)
+
 ```
