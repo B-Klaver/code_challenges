@@ -80,16 +80,36 @@ light_switch_v3 <- function(n) {
   
   
   #only squares get flipped
-  lights <- sqrt(1:n) %% 1 == 0
+#  lights <- 
+    sqrt(1:n) %% 1 == 0
   
-  message(paste0("Round ", n, ":"))
-  print(as.logical(lights))
+  #message(paste0("Round ", n, ":"))
+  #print(as.logical(lights))
   
 }
 
 light_switch_v1(9)
 light_switch_v2(9)
-light_switch_v3(9)
+light_switch_v3(25)
+
+
+#mikes solution
+
+light_bulb_pos <- function(n) {
+  
+  light_bulbs <- logical(n)
+  indices     <- seq_len(n)
+  
+  for (i in indices) {
+    
+    light_bulbs[which(indices %% i == 0)] <- !light_bulbs[which(indices %% i == 0)]
+    # cat('\t', light_bulbs, '\n')
+    
+  }
+  
+  which(light_bulbs == T)
+  
+}
 
 ```
 
