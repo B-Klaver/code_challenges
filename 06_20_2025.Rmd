@@ -1,0 +1,122 @@
+---
+title: "Friday Code Challenge"
+output: html_document
+date: "2025-06-20"
+---
+
+Problem
+Suppose a vector of `n` integers representing "heights" of walls, and that each index is 1 unit apart from adjacent indices. Write a function to calculate the amount of water trapped between two specific indices (water can overflow beyond the walls).
+ 
+Explanation
+wall_heights <- c(5, 1, 2, 4, 3, 2, 3)
+ 
+ 
+``` {r}
+
+water_units <- function(wall_heights, indices) {
+   
+   #create an empty vector to replace the wall heights
+   water_heights <- c()
+   
+   #go along our indices to slowly build our water heights
+   for (x in seq_along(wall_heights)) {
+      
+      #if we have already filled this index with water then skip
+      #or if we have reached our second index no need to further
+      #determine water heights
+      if (x <= length(water_heights) || indices[2] <= length(water_heights)) {
+         next
+      } else if (x == 1) {
+         #for our first index we just need to look right
+         
+         #find the next max wall height to the right, need to compare to current
+         #wall height to see how much water will fill
+         for (i in 2:length(wall_heights)){
+            #if we reach the end then assign that as the index
+            # if the current index is less than next index skip
+            # if current index is greater than next index and isn't
+            # the last index then assign 
+            if (i == length(wall_heights)) {
+               max_right_index <- i
+               break
+            } else if (wall_heights[i] < wall_heights[i+1]) {
+               next
+            } else {
+               max_right_index <- i
+               break
+            }
+         }
+         
+         #compare our highest wall to the right to the first index height
+         #keep the lowest
+         max_value <- ifelse(wall_heights[x] <= wall_heights[max_right_index], wall_heights[x], wall_heights[max_right_index])
+         
+         #fill our water vector with the lower value up to the max right index
+         water_heights <- rep(max_value, max_right_index-1)
+         
+      } else {
+         #after the first index we need to check left and right
+         
+         #which index to the right of current index has the next highest wall
+         for (i in x:length(wall_heights)){
+            #if we reach the end then assign that as the index
+            # if we are at the current index x then skip
+            # if the current index is less than next index skip
+            # if current index is greater than next index and isn't
+            # the last index then assign 
+            if (i == length(wall_heights)) {
+               max_right_index <- i
+               break
+            } else if (x == i) {
+               next
+            }  else if (wall_heights[i] < wall_heights[i+1]) {
+               next
+            } else {
+               max_right_index <- i
+               break
+            }
+         }
+         #for the left index we just need to compare current wall height to the water height to the immediate left
+         #whatever is higher we will keep
+         max_left_index <- ifelse(wall_heights[x] >= water_heights[length(water_heights)], x, length(water_heights))
+         
+         #find the lowest value of the two indices
+         max_value <- ifelse(wall_heights[max_left_index] <= wall_heights[max_right_index], wall_heights[max_left_index], wall_heights[max_right_index])
+         
+         #fill our water vector with this value for the appropriate amount of indices
+         water_heights <- c(water_heights, rep(max_value, max_right_index - length(water_heights) - 1))
+         
+      }
+      
+   }
+   
+   #sum our water heights between our indices
+   units <- sum(water_heights[indices[1]:indices[2]-1])
+   
+   return(units)
+   
+}
+
+water_units(c(5, 1, 2, 4, 3, 2, 3), c(1, 3))
+
+water_units(c(5, 1, 4, 3, 2, 3), c(1, 4)) #11
+water_units(c(5, 1, 4, 3, 2, 3), c(1, 5)) #14
+water_units(c(5, 1, 2, 3, 4, 5), c(1, 5)) #20
+water_units(c(2, 1, 4, 3, 4, 5), c(1, 4)) #8
+
+
+#Carl's
+water_trap <- function(heights, L, R) {
+  #browser()
+  total <- 0
+  n <- length(heights)
+  for(i in L:(R-1)) {
+    #browser()
+    left_max <- max(heights[1:i])
+    right_max <- max(heights[(i+1):n])
+    total <- total + min(left_max, right_max)
+  }
+  total
+}
+
+```
